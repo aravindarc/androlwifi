@@ -6,6 +6,7 @@ import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.speech.RecognizerIntent;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.EditText;
@@ -30,10 +31,11 @@ import java.util.ArrayList;
 import java.util.Locale;
 
 public class MainActivity extends AppCompatActivity {
+    final public int MAX = 10;
     public boolean flag = false;
 
     public static final String MyPREFERENCES = "aravind";
-    public static final String[] storedNames = {"keyValue1", "keyValue2", "keyValue3", "keyValue4", "keyValue5"};//device names storage
+    public static final String[] storedNames = {"keyValue0", "keyValue1", "keyValue2", "keyValue3", "keyValue4", "keyValue5", "keyValue6", "keyValue7", "keyValue8", "keyValue9"};//device names storage
     private static final int REQ_CODE_SPEECH_INPUT = 100;
     SharedPreferences sharedpreferences;
 
@@ -42,9 +44,9 @@ public class MainActivity extends AppCompatActivity {
     public TextView temp;// temp variables
 
 
-    public LinearLayout[] linearLayoutButtons = new LinearLayout[5];
+    public LinearLayout[] linearLayoutButtons = new LinearLayout[10];
 
-    public TextView[] deviceTextView = new TextView[5];//TextViews of all devices
+    public TextView[] deviceTextView = new TextView[10];//TextViews of all devices
 
     public EditText dialogEditText;
     public LinearLayout dialogLinearLayout;//Change device name dialogLinearLayout variables
@@ -57,11 +59,13 @@ public class MainActivity extends AppCompatActivity {
 
     final Context context = this;
     private String ipAddress = "192.168.43.254";
-    private Switch[] switches = new Switch[5];
+    private Switch[] switches = new Switch[10];
 
     /*............................................................................................*/
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+
+        refreshSwitches();
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
@@ -77,12 +81,22 @@ public class MainActivity extends AppCompatActivity {
         linearLayoutButtons[2] = (LinearLayout)findViewById(R.id.III_linear_layout_button);
         linearLayoutButtons[3] = (LinearLayout)findViewById(R.id.IV_linear_layout_button);
         linearLayoutButtons[4] = (LinearLayout)findViewById(R.id.V_linear_layout_button);
+        linearLayoutButtons[5] = (LinearLayout)findViewById(R.id.VI_linear_layout_button);
+        linearLayoutButtons[6] = (LinearLayout)findViewById(R.id.VII_linear_layout_button);
+        linearLayoutButtons[7] = (LinearLayout)findViewById(R.id.VIII_linear_layout_button);
+        linearLayoutButtons[8] = (LinearLayout)findViewById(R.id.IX_linear_layout_button);
+        linearLayoutButtons[9] = (LinearLayout)findViewById(R.id.X_linear_layout_button);
 
         deviceTextView[0] = (TextView)findViewById(R.id.IdeviceName);
         deviceTextView[1] = (TextView)findViewById(R.id.IIdeviceName);
         deviceTextView[2] = (TextView)findViewById(R.id.IIIdeviceName);
         deviceTextView[3] = (TextView)findViewById(R.id.IVdeviceName);
         deviceTextView[4] = (TextView)findViewById(R.id.VdeviceName);
+        deviceTextView[5] = (TextView)findViewById(R.id.VIdeviceName);
+        deviceTextView[6] = (TextView)findViewById(R.id.VIIdeviceName);
+        deviceTextView[7] = (TextView)findViewById(R.id.VIIIdeviceName);
+        deviceTextView[8] = (TextView)findViewById(R.id.IXdeviceName);
+        deviceTextView[9] = (TextView)findViewById(R.id.XdeviceName);
 
         dialogEditText = (EditText)findViewById(R.id.change_edit_text);
         dialogLinearLayout = (LinearLayout)findViewById(R.id.change_linear_layout);
@@ -98,59 +112,51 @@ public class MainActivity extends AppCompatActivity {
         switches[2] = (Switch)findViewById(R.id.III_switch);
         switches[3] = (Switch)findViewById(R.id.IV_switch);
         switches[4] = (Switch)findViewById(R.id.V_switch);
+        switches[5] = (Switch)findViewById(R.id.VI_switch);
+        switches[6] = (Switch)findViewById(R.id.VII_switch);
+        switches[7] = (Switch)findViewById(R.id.VIII_switch);
+        switches[8] = (Switch)findViewById(R.id.IX_switch);
+        switches[9] = (Switch)findViewById(R.id.X_switch);
 
         /*........................................................................................*/
 
 
-        for(int i=0; i<5; i++)
+        for(int i=0; i<MAX; i++)
             deviceTextView[i].setText(sharedpreferences.getString(storedNames[i], "Long press to edit"));
 
-
-        linearLayoutButtons[0].setOnLongClickListener(new View.OnLongClickListener() {
+        View.OnLongClickListener listener = new View.OnLongClickListener() {
             public boolean onLongClick(View v) {
-                id = 0;
-                temp = deviceTextView[0];
-                MainActivity.this.onLongClick();
+                LinearLayout linearLayout = (LinearLayout) v;
+                final int childCount = linearLayout.getChildCount();
+                for(int i=0; i<childCount; i++) {
+                    View element = linearLayout.getChildAt(i);
+                    if(element instanceof TextView) {
+                        TextView textView = (TextView) element;
+                        temp = textView;
+                        String forCompare = temp.getText().toString();
+
+                        for(int j=0; j<MAX; j++)
+                            if(linearLayout.getId() == linearLayoutButtons[j].getId())
+                                id = j;
+
+                        MainActivity.this.onLongClick();
+                        break;
+                    }
+                }
                 return true;
             }
-        });
+        };
 
-        linearLayoutButtons[1].setOnLongClickListener(new View.OnLongClickListener() {
-            public boolean onLongClick(View v) {
-                id = 1;
-                temp = deviceTextView[1];
-                MainActivity.this.onLongClick();
-                return true;
-            }
-        });
-
-        linearLayoutButtons[2].setOnLongClickListener(new View.OnLongClickListener() {
-            public boolean onLongClick(View v) {
-                id = 2;
-                temp = deviceTextView[2];
-                MainActivity.this.onLongClick();
-                return true;
-            }
-        });
-
-        linearLayoutButtons[3].setOnLongClickListener(new View.OnLongClickListener() {
-            public boolean onLongClick(View v) {
-                id = 3;
-                temp = deviceTextView[3];
-                MainActivity.this.onLongClick();
-                return true;
-            }
-        });
-
-        linearLayoutButtons[4].setOnLongClickListener(new View.OnLongClickListener() {
-            public boolean onLongClick(View v) {
-                id = 4;
-                temp = deviceTextView[4];
-                MainActivity.this.onLongClick();
-                return true;
-            }
-        });
-
+        linearLayoutButtons[0].setOnLongClickListener(listener);
+        linearLayoutButtons[1].setOnLongClickListener(listener);
+        linearLayoutButtons[2].setOnLongClickListener(listener);
+        linearLayoutButtons[3].setOnLongClickListener(listener);
+        linearLayoutButtons[4].setOnLongClickListener(listener);
+        linearLayoutButtons[5].setOnLongClickListener(listener);
+        linearLayoutButtons[6].setOnLongClickListener(listener);
+        linearLayoutButtons[7].setOnLongClickListener(listener);
+        linearLayoutButtons[8].setOnLongClickListener(listener);
+        linearLayoutButtons[9].setOnLongClickListener(listener);
 
         new Thread(new Runnable() {
             @Override
@@ -200,36 +206,19 @@ public class MainActivity extends AppCompatActivity {
             Toast.makeText(MainActivity.this, "Please enter the ip address...", Toast.LENGTH_SHORT).show();
 
         else {
-            if( view == switches[0] ) {
-                if ( switches[0].isChecked() )
-                    message = "D0-ON";
-                else
-                    message = "D0-OFF";
-            }
-            else if( view == switches[1] ) {
-                if ( switches[1].isChecked() )
-                    message = "D1-ON";
-                else
-                    message = "D1-OFF";
-            }
-            else if( view == switches[2] ) {
-                if( switches[2].isChecked() )
-                    message = "D2-ON";
-                else
-                    message = "D2-OFF";
-            }
-            else if( view == switches[3] ) {
-                if( switches[3].isChecked() )
-                    message = "D3-ON";
-                else
-                    message = "D3-OFF";
-            }
-            else if( view == switches[4] ) {
-                if( switches[4].isChecked() )
-                    message = "D4-ON";
-                else
-                    message = "D4-OFF";
-            }
+
+            int index = -1;
+
+            for(int i=0; i<MAX; i++)
+                if(view == switches[i]) {
+                    index = i;
+                    break;
+                }
+
+            if(switches[index].isChecked())
+                message = "D"+index+"-ON";
+            else
+                message = "D"+index+"-OFF";
 
             String serverAddress = ipAddress + ":" + "80";
             HttpRequestTask requestTask = new HttpRequestTask(serverAddress);
@@ -274,10 +263,10 @@ public class MainActivity extends AppCompatActivity {
 
         String message = "";
         Toast.makeText(getApplicationContext(), inputString, Toast.LENGTH_SHORT).show();
-        int[] indexList = new int[5];
+        int[] indexList = new int[MAX];
 
 
-        for (int i = 0; i < 5; i++)
+        for (int i = 0; i < MAX; i++)
             indexList[i] = inputString.toLowerCase().indexOf(deviceTextView[i].getText().toString().toLowerCase());
 
         int on = inputString.toLowerCase().indexOf("on");
@@ -286,64 +275,37 @@ public class MainActivity extends AppCompatActivity {
 
         boolean flag = true;
 
-        if (on != -1 || off != -1) {
-            if (indexList[0] != -1) {
-                if (on != -1)
-                    message = "D0-ON";
-                else
-                    message = "D0-OFF";
-                flag = false;
+
+
+            for(int i=0; i<MAX; i++) {
+                if (indexList[i] != -1) {
+                    if (on != -1)
+                        message = "D" + i + "-ON";
+                    else if(off != -1)
+                        message = "D" + i + "-OFF";
+                    flag = false;
+                    break;
+                }
             }
 
-            if (indexList[1] != -1) {
-                if (on != -1)
-                    message = "D1-ON";
-                else
-                    message = "D1-OFF";
-                flag = false;
-            }
-
-            if (indexList[2] != -1) {
-                if (on != -1)
-                    message = "D2-ON";
-                else
-                    message = "D2-OFF";
-                flag = false;
-            }
-
-            if (indexList[3] != -1) {
-                if (on != -1)
-                    message = "D3-ON";
-                else
-                    message = "D3-OFF";
-                flag = false;
-            }
-
-            if (indexList[4] != -1) {
-                if (on != -1)
-                    message = "D4-ON";
-                else
-                    message = "D4-OFF";
-                flag = false;
-            }
-
-            if (all != -1) {
-                if (on != -1)
+            if(all != -1) {
+                if(on != -1)
                     message = "ALL-ON";
-                else
+                else if(off != -1)
                     message = "ALL-OFF";
                 flag = false;
             }
 
+        if( flag )
+            makeToast("Unrecognized voice command");
+        else {
+
             String serverAddress = ipAddress + ":" + "80";
             HttpRequestTask requestTask = new HttpRequestTask(serverAddress);
             requestTask.execute(message);
+
+            refreshSwitches();
         }
-
-
-        if( flag )
-            makeToast("Unrecognized voice command");
-
     }
 
     public void refreshSwitches() {
@@ -357,6 +319,7 @@ public class MainActivity extends AppCompatActivity {
 
         private String serverAddress;
         private String serverResponse = "";
+        private AlertDialog dialog;
 
         public HttpRequestTask(String serverAddress) {
             this.serverAddress = serverAddress;
@@ -400,9 +363,9 @@ public class MainActivity extends AppCompatActivity {
             if( flag ) {
                 int switchStateSetter = -1;
 
-                String[] temp = { "A", "B", "C", "D", "E" };
+                String[] temp = { "A", "B", "C", "D", "E", "F", "G", "H", "I", "J", };
                 try {
-                    for (int i = 0; i < 5; i++) {
+                    for (int i = 0; i < MAX; i++) {
                         switchStateSetter = serverResponse.indexOf(temp[i]);
                         if (switchStateSetter != -1) {
                             switches[i].setChecked(true);
